@@ -29,6 +29,14 @@ export const ArticleParamsForm = () => {
 		}
 	}
 
+	function chekedLocalStoageStyle(name: string, style: string){
+		const saved = localStorage.getItem(`${name}`);
+		if (saved) {
+			const parsed = JSON.parse(saved);
+			document.documentElement.style.setProperty(`${style}`, parsed.value);
+		}
+	}
+
 	const handleApplyChanges = () => {
 		localStorage.setItem('selectedFontFamily', JSON.stringify(selectedFontFamily));
 		localStorage.setItem('selectedFontSize', JSON.stringify(selectedFontSize));
@@ -43,6 +51,14 @@ export const ArticleParamsForm = () => {
 		chekedLocalStoage('selectedFontColor', setSelectedFontColor);
 		chekedLocalStoage('selectedBackgroundColor', setBackgroundColor);
 		chekedLocalStoage('selectedContentWidth', setContentWidth);
+	}, []);
+
+	useEffect(() => {
+		chekedLocalStoageStyle('selectedFontFamily','--font-family');
+		chekedLocalStoageStyle('selectedFontSize','--font-size');
+		chekedLocalStoageStyle('selectedFontColor','--font-color');
+		chekedLocalStoageStyle('selectedBackgroundColor','--bg-color');
+		chekedLocalStoageStyle('selectedContentWidth','--container-width');
 	}, []);
 
 	const handleReset = () => {
@@ -61,11 +77,12 @@ export const ArticleParamsForm = () => {
   };
 
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+		if (!isOpen) return;
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+  }, [isOpen]);
 
 	return (
 		<>
@@ -119,7 +136,7 @@ export const ArticleParamsForm = () => {
 					placeholder="Выберите ширину"
 					onChange={(option) => setContentWidth(option)}
 					onClose={() => setIsOpen(false)}
-					title="ширина контента"
+					title="Ширина контента"
 				/>
 				<Space />
 					<div className={styles.bottomContainer}>
